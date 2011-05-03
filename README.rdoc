@@ -1,6 +1,6 @@
 = refinerycms-s3assets
 
- A common development scenario,  when using a Heroku-hosted RefineryCMS app, is to copy production data to development via the use of heroku db:pull. With this gem one can also copy production assets stored on s3 onto the local filesystem.
+ A common development scenario,  when using a Heroku-hosted RefineryCMS app, is to copy production data to development via the use of heroku db:pull. This gem adds a rake task to your RefineryCMS project which copies your production assets stored on s3 onto the local filesystem.
 
 = Requirements
 
