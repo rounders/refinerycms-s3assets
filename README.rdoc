@@ -1,0 +1,38 @@
+= refinerycms-s3assets
+
+ A common development scenario,  when using a Heroku-hosted RefineryCMS app, is to copy production data to development via the use of heroku db:pull. With this gem one can also copy production assets stored on s3 onto the local filesystem.
+
+= Requirements
+
+1. Mac OS X, Linux, or UNIX.
+2. A Heroku account.
+
+== Installation
+
+Open up your Gemfile and add at the bottom this line:
+
+    $ gem 'refinerycms-s3assets'
+
+Now, run bundle install.
+
+== Usage
+
+This gem assumes that your production Heroku app is storing assets on Amazon s3 and that your Heroku app has the following three config vars properly defined: S3_BUCKET, S3_KEY and S3_SECRET ( see http://devcenter.heroku.com/articles/config-vars for more info). 
+
+Start by copying your production database to your local database:
+
+    $ heroku db:pull 
+
+To copy all Image and Resource files from S3 you can now run the following:
+
+    $ rake refinery:download_s3_assets
+
+== License
+
+Please see MIT-LICENSE for more details.
+
+== Copyright
+
+Copyright (c) 2011 Rounders Consulting Inc.
+
+
