@@ -1,5 +1,5 @@
 require 'aws/s3'
-require 'heroku/command'
+require 'heroku/command/base'
 require 'progress_bar'
 
 module Refinery
@@ -62,16 +62,15 @@ module Refinery
       def self.s3_config
         return @s3_config unless @s3_config.nil?
         
-        heroku_command = Heroku::Command::Base.new({})
-        
         begin
-          app = heroku_command.extract_app
+          base = Heroku::Command::BaseWithApp.new
+          app = base.app
         rescue 
           puts "This does not look like a Heroku app!"
           exit
         end
         
-        config_vars =  heroku_command.heroku.config_vars(app)
+        config_vars =  base.heroku.config_vars(app)
         
         @s3_config = {
           :s3_key => ENV['S3_KEY'] || config_vars['S3_KEY'],
