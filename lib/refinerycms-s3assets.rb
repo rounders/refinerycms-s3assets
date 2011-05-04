@@ -13,8 +13,6 @@ module Refinery
     class Util
 
       def self.pull
-        puts s3_config.inspect
-        
         raise(CommandFailed, "no S3_KEY config var or environment variable found") if s3_config[:s3_key].nil?
         raise(CommandFailed, "no S3_SECRET config var or environment variable found") if s3_config[:s3_secret].nil?
         raise(CommandFailed, "no S3_BUCKET config var or environment variable found") if s3_config[:s3_bucket].nil?
