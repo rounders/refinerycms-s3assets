@@ -12,11 +12,11 @@ A common development scenario,  when using a Heroku-hosted RefineryCMS app, is t
 
 Open up your Gemfile and add at the bottom this line:
 
-    $ gem 'refinerycms-s3assets'
+    gem 'refinerycms-s3assets'
 
 Now, run:
 
-	$ bundle install.
+	$ bundle install
 
 == Usage
 
