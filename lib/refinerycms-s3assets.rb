@@ -13,9 +13,9 @@ module Refinery
     class Util
 
       def self.pull
-        raise(CommandFailed, "no S3_KEY config var or environment variable found") if s3_config[:s3_key].nil?
-        raise(CommandFailed, "no S3_SECRET config var or environment variable found") if s3_config[:s3_secret].nil?
-        raise(CommandFailed, "no S3_BUCKET config var or environment variable found") if s3_config[:s3_bucket].nil?
+        raise(StandardError, "no S3_KEY config var or environment variable found") if s3_config[:s3_key].nil?
+        raise(StandardError, "no S3_SECRET config var or environment variable found") if s3_config[:s3_secret].nil?
+        raise(StandardError, "no S3_BUCKET config var or environment variable found") if s3_config[:s3_bucket].nil?
         copy_s3_bucket(s3_config[:s3_key], s3_config[:s3_secret], s3_config[:s3_bucket], 'public/system')
       end
 
@@ -63,7 +63,14 @@ module Refinery
         return @s3_config unless @s3_config.nil?
         
         heroku_command = Heroku::Command::Base.new({})
-        app = heroku_command.extract_app
+        
+        begin
+          app = heroku_command.extract_app
+        rescue 
+          puts "This does not look like a Heroku app!"
+          exit
+        end
+        
         config_vars =  heroku_command.heroku.config_vars(app)
         
         @s3_config = {
