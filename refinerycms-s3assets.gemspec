@@ -4,7 +4,7 @@ require "refinerycms-s3assets/version"
 
 Gem::Specification.new do |s|
   s.name        = "refinerycms-s3assets"
-  s.version     = Refinerycms::S3assets::VERSION
+  s.version     = Refinery::S3assets::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Francois Harbec"]
   s.email       = ["fharbec@gmail.com"]
