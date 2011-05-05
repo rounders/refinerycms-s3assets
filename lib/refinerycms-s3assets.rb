@@ -27,16 +27,16 @@ module Refinery
 
         puts "There are #{Image.count} images in the #{s3_bucket} bucket"        
         Image.all.each do |image|
-          object = AWS::S3::S3Object.find image.image_uid,s3_bucket
-          dest = File.join(output_path,"images",object.key)
-          copy_s3_object(object,dest)
+          s3_object = AWS::S3::S3Object.find image.image_uid,s3_bucket
+          dest = File.join(output_path,"images",s3_object.key)
+          copy_s3_object(s3_object,dest)
         end
         
         puts "\n\nThere are #{Resource.count} resources in the #{s3_bucket} bucket"        
         Resource.all.each do |resource|
-          object = AWS::S3::S3Object.find resource.file_uid,s3_bucket
-          dest = File.join(output_path,"resources",object.key)
-          copy_s3_object(object,dest)
+          s3_object = AWS::S3::S3Object.find resource.file_uid,s3_bucket
+          dest = File.join(output_path,"resources",s3_object.key)
+          copy_s3_object(s3_object,dest)
         end
         
       end
@@ -49,10 +49,10 @@ module Refinery
 
         bar = ProgressBar.new(filesize, :percentage, :counter)
 
-        open(to, 'w') do |f|
+        open(to, 'wb') do |f|
           s3_object.value do |chunk|
             bar.increment! chunk.size
-            f.puts chunk
+            f.write chunk
           end
         end
 
