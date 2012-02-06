@@ -16,7 +16,7 @@ module Refinery
         raise(StandardError, "no S3_KEY config var or environment variable found") if s3_config[:s3_key].nil?
         raise(StandardError, "no S3_SECRET config var or environment variable found") if s3_config[:s3_secret].nil?
         raise(StandardError, "no S3_BUCKET config var or environment variable found") if s3_config[:s3_bucket].nil?
-        copy_s3_bucket(s3_config[:s3_key], s3_config[:s3_secret], s3_config[:s3_bucket], 'public/system')
+        copy_s3_bucket(s3_config[:s3_key], s3_config[:s3_secret], s3_config[:s3_bucket], 'public/system/refinery')
       end
 
       private
