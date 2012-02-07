@@ -11,9 +11,9 @@ Gem::Specification.new do |s|
   s.homepage    = ""
   s.summary     = %q{copies s3 assets from production refinerycms app hosted on Heroku to local}
   s.description = %q{copies s3 assets from production refinerycms app hosted on Heroku to local}
-  
+
   s.add_dependency("aws-s3", "~> 0.6.2")
-  s.add_dependency("heroku", "~> 2.0.4")
+  s.add_dependency("heroku", "~> 2.19.1")
   s.add_dependency("progress_bar", "~> 0.3.4")
 
   s.rubyforge_project = "refinerycms-s3assets"
