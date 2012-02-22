@@ -13,14 +13,23 @@ module Refinery
     class Util
 
       def self.pull
-        raise(StandardError, "no S3_KEY config var or environment variable found") if s3_config[:key].nil?
-        raise(StandardError, "no S3_SECRET config var or environment variable found") if s3_config[:secret].nil?
-        raise(StandardError, "no S3_BUCKET config var or environment variable found") if s3_config[:bucket].nil?
+        verify_s3_configuration
         copy_s3_bucket(s3_config[:key], s3_config[:secret], s3_config[:bucket], 'public/system/refinery')
+      end
+      
+      def self.push
+        verify_s3_configuration
+        upload_to_s3_bucket(s3_config[:key], s3_config[:secret], s3_config[:bucket], 'public/system/refinery')
       end
 
     private
-
+    
+      def self.verify_s3_configuration
+        raise(StandardError, "no S3_KEY config var or environment variable found") if s3_config[:key].nil?
+        raise(StandardError, "no S3_SECRET config var or environment variable found") if s3_config[:secret].nil?
+        raise(StandardError, "no S3_BUCKET config var or environment variable found") if s3_config[:bucket].nil?
+      end
+      
       def self.copy_s3_bucket(s3_key, s3_secret, s3_bucket, output_path)
         AWS::S3::Base.establish_connection!(:access_key_id => s3_key, :secret_access_key => s3_secret)
         bucket = AWS::S3::Bucket.find(s3_bucket)
@@ -39,6 +48,23 @@ module Refinery
           copy_s3_object(s3_object,dest)
         end
 
+      end
+      
+      def self.upload_to_s3_bucket(s3_key, s3_secret, s3_bucket, source_path)
+        AWS::S3::Base.establish_connection!(:access_key_id => s3_key, :secret_access_key => s3_secret)
+        bucket = AWS::S3::Bucket.find(s3_bucket)
+
+        puts "There are #{Image.count} images in the #{s3_bucket} bucket"
+        Image.all.each do |image|
+          source = File.join(source_path,"images", image.image_uid)
+          s3_path = source.gsub('public/system/refinery/images','')
+          puts "Uploading #{s3_path}"
+          begin
+            AWS::S3::S3Object.store(s3_path, open(source), s3_bucket, :access => :public_read)
+          rescue => e
+            puts "Failed #{e}"
+          end
+        end
       end
 
       def self.copy_s3_object(s3_object, to)
