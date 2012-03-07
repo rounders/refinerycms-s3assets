@@ -1,4 +1,4 @@
-require 'aws/s3'
+require 'aws-sdk'
 require 'heroku/command/base'
 require 'progress_bar'
 
@@ -13,50 +13,64 @@ module Refinery
     class Util
 
       def self.pull
-        raise(StandardError, "no S3_KEY config var or environment variable found") if s3_config[:key].nil?
-        raise(StandardError, "no S3_SECRET config var or environment variable found") if s3_config[:secret].nil?
-        raise(StandardError, "no S3_BUCKET config var or environment variable found") if s3_config[:bucket].nil?
-        copy_s3_bucket(s3_config[:key], s3_config[:secret], s3_config[:bucket], 'public/system/refinery')
+        verify_s3_configuration
+        base_path = "public/system/refinery"
+        copy_from_s3_bucket(Image, :image_uid, s3_config[:bucket], File.join(base_path, "images"))
+        copy_from_s3_bucket(Resource, :file_uid, s3_config[:bucket], File.join(base_path, "resources"))
       end
 
-    private
+      def self.push
+        verify_s3_configuration
+        base_path = "public/system/refinery"
+        copy_to_s3_bucket(Image, :image_uid, s3_config[:bucket], File.join(base_path, "images"))
+        copy_to_s3_bucket(Resource, :file_uid, s3_config[:bucket], File.join(base_path, "resources"))
+      end
 
-      def self.copy_s3_bucket(s3_key, s3_secret, s3_bucket, output_path)
-        AWS::S3::Base.establish_connection!(:access_key_id => s3_key, :secret_access_key => s3_secret)
-        bucket = AWS::S3::Bucket.find(s3_bucket)
+      private
 
-        puts "There are #{Image.count} images in the #{s3_bucket} bucket"
-        Image.all.each do |image|
-          s3_object = AWS::S3::S3Object.find image.image_uid,s3_bucket
-          dest = File.join(output_path,"images",s3_object.key)
-          copy_s3_object(s3_object,dest)
+      def self.verify_s3_configuration
+        { :key => 'S3_KEY', :secret => 'S3_SECRET', :bucket => 'S3_BUCKET' }.each do |key, val|
+          raise(StandardError, "no #{val} config var or environment variable found") if s3_config[key].nil?
         end
+      end
 
-        puts "\n\nThere are #{Resource.count} resources in the #{s3_bucket} bucket"
-        Resource.all.each do |resource|
-          s3_object = AWS::S3::S3Object.find resource.file_uid,s3_bucket
-          dest = File.join(output_path,"resources",s3_object.key)
-          copy_s3_object(s3_object,dest)
+      def self.copy_to_s3_bucket(klass, uid, bucket, source_path)
+        puts "Uploading #{klass.count} #{klass.to_s.pluralize} to #{bucket} bucket"
+        bar = ProgressBar.new(klass.count, :bar, :counter, :percentage)
+        klass.all.each do |object|
+          s3_object = s3.buckets[bucket].objects[object.send(uid)]
+          path = File.join(source_path, object.send(uid))
+          s3_object.write(:file => path, :acl => :public_read)
+          bar.increment!
         end
+      end
 
+      def self.copy_from_s3_bucket(klass, uid, bucket, output_path)
+        puts "Downloading #{klass.count} #{klass.to_s.pluralize} from #{bucket} bucket"
+        bar = ProgressBar.new(klass.count, :bar, :counter, :percentage)
+        skipped_files = []
+        klass.all.each do |object|
+          begin
+            s3_object = s3.buckets[bucket].objects[object.send(uid)]
+            dest = File.join(output_path, s3_object.key)
+            copy_s3_object(s3_object, dest)
+            bar.increment!
+          rescue AWS::S3::Errors::NoSuchKey
+            skipped_files << object.send(uid)
+          end
+        end
+        skipped_files.each {|f| puts "could not find #{f}"}
       end
 
       def self.copy_s3_object(s3_object, to)
         FileUtils::mkdir_p File.dirname(to), :verbose => false
-
-        filesize = s3_object.about['content-length'].to_f
-        puts "Saving #{s3_object.key} (#{filesize} bytes):"
-
-        bar = ProgressBar.new(filesize, :percentage, :counter)
-
         open(to, 'wb') do |f|
-          s3_object.value do |chunk|
-            bar.increment! chunk.size
-            f.write chunk
-          end
+          f.write s3_object.read
         end
+      end
 
-        puts "\n=======================================\n"
+      def self.s3
+        @s3 ||= AWS::S3.new(:access_key_id => s3_config[:key], :secret_access_key => s3_config[:secret])
       end
 
       def self.s3_config

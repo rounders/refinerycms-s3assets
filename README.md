@@ -29,6 +29,8 @@ This gem assumes that your production Heroku app is storing assets on Amazon s3
 and that your Heroku app has the following three config vars properly defined:
 `S3_BUCKET`, `S3_KEY` and `S3_SECRET` ( see http://devcenter.heroku.com/articles/config-vars for more info).
 
+### Copying production data to development
+
 Start by copying your production database to your local database:
 
 ```shell
@@ -38,7 +40,21 @@ heroku db:pull
 To copy all Image and Resource files from S3 you can now run the following:
 
 ```shell
-bundle exec rake refinery:download_s3_assets
+bundle exec rake refinery_s3_assets:pull
+```
+
+### Copying development data to production
+
+Start by copying your development database to your production:
+
+```shell
+heroku db:push
+```
+
+To copy all Image and Resources files from local development to S3 you can run the following:
+
+```shell
+bundle exec rake refinery_s3_assets:push
 ```
 
 If you do not have a Heroku application but you do know the S3 credentials then you
@@ -47,6 +63,10 @@ can provide these manually as ENV variables:
 ```shell
 S3_KEY=key S3_SECRET=secret S3_BUCKET=bucket bundle exec rake refinery:download_s3_assets
 ```
+
+## Warning
+
+There is currently no prompting if you are overwriting existing files so please be careful.
 
 ## License
 
