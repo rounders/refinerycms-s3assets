@@ -7,7 +7,7 @@ This gem adds a rake task to your Refinery CMS project which copies your product
 
 1. Mac OS X, Linux, or UNIX.
 2. A Heroku account (or S3 credentials).
-3. A Refinery CMS project
+3. A Refinery CMS 2.x project (RefineryCMS 1.x not currently supported)
 
 ## Installation
 
