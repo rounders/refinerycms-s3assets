@@ -14,7 +14,7 @@ This gem adds a rake task to your Refinery CMS project which copies your product
 Open up your Gemfile and add at the bottom this line:
 
 ```ruby
-gem 'refinerycms-s3assets'
+gem 'refinerycms-s3assets', :group => :development
 ```
 
 Now, run:
