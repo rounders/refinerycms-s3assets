@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Francois Harbec"]
   s.email       = ["fharbec@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/rounders/refinerycms-s3assets"
   s.summary     = %q{copies s3 assets from production refinerycms app hosted on Heroku to local}
   s.description = %q{copies s3 assets from production refinerycms app hosted on Heroku to local}
 
