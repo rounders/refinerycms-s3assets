@@ -40,7 +40,7 @@ heroku db:pull
 To copy all Image and Resource files from S3 you can now run the following:
 
 ```shell
-bundle exec rake refinery_s3_assets:pull
+bundle exec rake refinery_s3assets:pull
 ```
 
 ### Copying development data to production
@@ -54,14 +54,16 @@ heroku db:push
 To copy all Image and Resources files from local development to S3 you can run the following:
 
 ```shell
-bundle exec rake refinery_s3_assets:push
+bundle exec rake refinery_s3assets:push
 ```
+
+### Alternatative methods of specifying S3 credentials
 
 If you do not have a Heroku application but you do know the S3 credentials then you
 can provide these manually as ENV variables:
 
 ```shell
-S3_KEY=key S3_SECRET=secret S3_BUCKET=bucket bundle exec rake refinery:download_s3_assets
+S3_KEY=key S3_SECRET=secret S3_BUCKET=bucket bundle exec rake refinery_s3assets:pull
 ```
 
 ## Warning
@@ -74,4 +76,4 @@ Please see MIT-LICENSE for more details.
 
 ## Copyright
 
-Copyright (c) 2011 Rounders Consulting Inc.
+Copyright (c) 2012 Rounders Consulting Inc.

@@ -1,6 +1,6 @@
 
 
-namespace :refinery_s3_assets do
+namespace :refinery_s3assets do
   desc "download image and resource assets from s3"
   task :pull => :environment do
     Refinery::S3assets::Util.pull
@@ -14,6 +14,6 @@ end
 
 # preserve old tasks
 namespace :refinery do
-  task :download_s3_assets => 'refinery_s3_assets:pull'
-  task :upload_s3_assets => 'refinery_s3_assets:push' 
+  task :download_s3_assets => 'refinery_s3assets:pull'
+  task :upload_s3_assets => 'refinery_s3assets:push' 
 end
