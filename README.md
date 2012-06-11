@@ -7,14 +7,14 @@ This gem adds a rake task to your Refinery CMS project which copies your product
 
 1. Mac OS X, Linux, or UNIX.
 2. A Heroku account (or S3 credentials).
-3. A Refinery CMS 2.x project (RefineryCMS 1.x not currently supported)
+3. A Refinery CMS project (Refinery 1.x and 2.x are supported)
 
 ## Installation
 
 Open up your Gemfile and add at the bottom this line:
 
 ```ruby
-gem 'refinerycms-s3assets', '~> 0.2.0', :group => :development
+gem 'refinerycms-s3assets', :group => :development
 ```
 
 Now, run:

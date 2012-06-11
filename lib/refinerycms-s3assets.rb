@@ -14,7 +14,6 @@ module Refinery
 
       def self.pull
         verify_s3_configuration
-        base_path = "public/system/refinery"
         copy_from_s3_bucket(Image, :image_uid, s3_config[:bucket], File.join(base_path, "images"))
         copy_from_s3_bucket(Resource, :file_uid, s3_config[:bucket], File.join(base_path, "resources"))
       end
@@ -27,6 +26,10 @@ module Refinery
       end
 
       private
+      
+      def self.base_path
+        defined?(::Refinery::Image) ? "public/system/refinery" : "public/system"
+      end
 
       def self.verify_s3_configuration
         { :key => 'S3_KEY', :secret => 'S3_SECRET', :bucket => 'S3_BUCKET' }.each do |key, val|
